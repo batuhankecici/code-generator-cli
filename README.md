@@ -5,10 +5,15 @@ CLI Generates code according to DDD
 go get -u github.com/batuhankecici/keyvaluestore
 ```
 # Usage
+**Optinal Path Commands:**
+```zsh
+go run main.go manager --manager-name User --path "managers/"
+go run main.go model --model-name user --path "models/"
+```
 **Command:**
 ```zsh
 
-go run main.go model --model-name user //default path models/
+go run main.go model --model-name user //default path "models/"
 ```
 **Output:**
 ```zsh
@@ -89,3 +94,4 @@ func (m UserManager) List(users *[]models.User) error {
 	return helpers.GORMErrConverter(result.Error)
 }
 ```
+
