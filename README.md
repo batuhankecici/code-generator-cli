@@ -5,12 +5,13 @@ CLI Generates code according to DDD
 go get -u github.com/batuhankecici/keyvaluestore
 ```
 # Usage
-
-```zsh
 **Command:**
-go run main.go model --model-name user //default path models/
-**Output:**
+```zsh
 
+go run main.go model --model-name user //default path models/
+```
+**Output:**
+```zsh
 package models
 
 //User is struct for db. 
@@ -23,11 +24,14 @@ package models
  return "hs_user"
 }
 
-
+```
 
 **Command:**
+```zsh
 % go run main.go manager --manager-name user 
+```
 **Output:**
+```zsh
 package managers
 
 import (
