@@ -2,13 +2,19 @@
 CLI Generates code according to DDD
 # Installation
 ```bash
-go get -u github.com/batuhankecici/keyvaluestore
+go get -u github.com/batuhankecici/code-generator-cli
 ```
 # Usage
 **Optinal Path Commands:**
 ```zsh
 go run main.go manager --manager-name User --path "managers/"
 go run main.go model --model-name user --path "models/"
+go run main.go exchange --exchange-name user --path "exchanges/"
+go run main.go controller --controller-name user --path "controller/"
+```
+**Create All Commands:**
+```zsh
+go run main.go create --create-name "user name"
 ```
 **Command:**
 ```zsh
