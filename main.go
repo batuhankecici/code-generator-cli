@@ -288,16 +288,24 @@ func main() {
 						log.Fatal(err)
 					}
 					defer file.Close()
-					len, err := ioutil.ReadFile("source/restTestTemplate.txt")
+					lens, err := ioutil.ReadFile("source/restTestTemplate.txt")
 					if err != nil {
 						log.Fatal(err)
 					}
-					if strings.Contains(string(len), "${ModelName}") || strings.Contains(string(len), "${modelName}") || strings.Contains(string(len), "${model_name_snake_case}") {
-						len = []byte(strings.Replace(string(len), "${ModelName}", restTestString, -1))
-						len = []byte(strings.Replace(string(len), "${modelName}", strcase.ToLowerCamel(restTestString), -1))
-						len = []byte(strings.Replace(string(len), "${model_name_snake_case}", strcase.ToSnake(restTestString), -1))
+					if strings.Contains(string(lens), "${ModelName}") || strings.Contains(string(lens), "${modelName}") || strings.Contains(string(lens), "${model_name_snake_case}") || strings.Contains(string(lens), "${routeSuffix}") {
+						lens = []byte(strings.Replace(string(lens), "${ModelName}", restTestString, -1))
+						lens = []byte(strings.Replace(string(lens), "${modelName}", strcase.ToLowerCamel(restTestString), -1))
+						lens = []byte(strings.Replace(string(lens), "${model_name_snake_case}", strcase.ToSnake(restTestString), -1))
+						substring := restTestString[len(restTestString)-1:]
+						generated := restTestString[0 : len(restTestString)-1]
+						if substring == "y" {
+							lens = []byte(strings.Replace(string(lens), "${routeSuffix}", strcase.ToKebab(generated)+"ies", -1))
+						} else {
+							lens = []byte(strings.Replace(string(lens), "${routeSuffix}", strcase.ToKebab(restTestString)+"s", -1))
+						}
+
 					}
-					file.WriteString(string(len))
+					file.WriteString(string(lens))
 				}
 				return nil
 			},
