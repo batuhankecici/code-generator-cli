@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
-	"strconv"
 	"strings"
 
 	"github.com/iancoleman/strcase"
@@ -17,6 +17,24 @@ func main() {
 	app.Name = "Code Generator"
 	app.Usage = "Generates code according to DDD"
 
+	restTestFlags := []cli.Flag{
+		cli.StringFlag{
+			Name:  "path",
+			Value: "../cmd/server/rest/",
+		},
+		cli.StringFlag{
+			Name: "rest-test-name",
+		},
+	}
+	restFlags := []cli.Flag{
+		cli.StringFlag{
+			Name:  "path",
+			Value: "../cmd/server/rest/",
+		},
+		cli.StringFlag{
+			Name: "rest-name",
+		},
+	}
 	createFlags := []cli.Flag{
 		cli.StringFlag{
 			Name: "create-name",
@@ -25,7 +43,7 @@ func main() {
 	modelFlags := []cli.Flag{
 		cli.StringFlag{
 			Name:  "path",
-			Value: "models/",
+			Value: "../models/",
 		},
 		cli.StringFlag{
 			Name: "model-name",
@@ -34,7 +52,7 @@ func main() {
 	managerFlags := []cli.Flag{
 		cli.StringFlag{
 			Name:  "path",
-			Value: "managers/",
+			Value: "../models/managers/",
 		},
 		cli.StringFlag{
 			Name: "manager-name",
@@ -43,7 +61,7 @@ func main() {
 	exchangeFlags := []cli.Flag{
 		cli.StringFlag{
 			Name:  "path",
-			Value: "exchanges/",
+			Value: "../exchanges/",
 		},
 		cli.StringFlag{
 			Name: "exchange-name",
@@ -52,7 +70,7 @@ func main() {
 	controllerFlags := []cli.Flag{
 		cli.StringFlag{
 			Name:  "path",
-			Value: "controller/",
+			Value: "../controller/",
 		},
 		cli.StringFlag{
 			Name: "controller-name",
@@ -67,7 +85,7 @@ func main() {
 				filepath := c.String("path")
 				value := c.String("model-name")
 				if value == "" {
-					fmt.Println("model cannot be empty")
+					fmt.Println("model name cannot be empty")
 				} else {
 
 					modelString := strcase.ToCamel(value)
@@ -75,19 +93,17 @@ func main() {
 					if err != nil {
 						log.Fatal(err)
 					}
-
-					// Fonksiyon sonunda dosyayı kapat
 					defer file.Close()
-
-					// Dosyaya yaz
-					len, err := file.WriteString("package models\n\n//" + modelString + " is struct for db. \n type " + modelString + " struct{\n\tBase\n}\n\n// TableName custom table name function\n func(m " + modelString + ") TableName()string { \n return " + "\"" + "hs_" + strcase.ToSnake(modelString) + "\"" + "\n}")
+					len, err := ioutil.ReadFile("source/modelTemplate.txt")
 					if err != nil {
 						log.Fatal(err)
-					} else {
-						log.Println("Yazılan byte boyutu: " + strconv.Itoa(len))
 					}
+					if strings.Contains(string(len), "$ModelNameUpperCase") || strings.Contains(string(len), "$model_name_snake_case") {
+						len = []byte(strings.Replace(string(len), "$ModelNameUpperCase", modelString, -1))
+						len = []byte(strings.Replace(string(len), "$model_name_snake_case", strcase.ToSnake(modelString), -1))
+					}
+					file.WriteString(string(len))
 				}
-
 				return nil
 			},
 		},
@@ -101,23 +117,23 @@ func main() {
 				if value == "" {
 					fmt.Println("manager name cannot be empty")
 				} else {
+
 					managerString := strcase.ToCamel(value)
 					file, err := os.OpenFile(filepath+strings.ToLower(managerString)+".go", os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
 					if err != nil {
 						log.Fatal(err)
 					}
-					// Fonksiyon sonunda dosyayı kapat
 					defer file.Close()
-
-					// Dosyaya yaz
-					len, err := file.WriteString("package managers\n\nimport (\n\t" + "\"" + "github.com/biges/hybrone-sentinel-backend/models" + "\"\n\t" + "\"github.com/biges/hybrone-sentinel-backend/helpers" + "\"\n\t" + "\"" + "gorm.io/gorm" + "\"\n)\n\n//" + managerString + "Storage defines the behaviors required to perform CRUD operations on a Device model.\ntype " + managerString + "Storage interface {\n\tCreate(" + strcase.ToLowerCamel(managerString) + " *models." + managerString + ") error\n\tUpdate(" + strcase.ToLowerCamel(managerString) + " *models." + managerString + ") error\n\tDelete(id uint) error\n\tGet(" + strcase.ToLowerCamel(managerString) + " *models." + managerString + ") error\n\tList(" + strcase.ToLowerCamel(managerString) + " []*models." + managerString + ")error\n}\n\n// " + managerString + "Manager represents Device related CRUD operations.\ntype " + managerString + "Manager struct {\n\tdb *gorm.DB\n}\n\n// New" + managerString + "Manager returns DeviceManager instance.\nfunc New" + managerString + "Manager(db *gorm.DB) " + managerString + "Storage {\n\treturn &" + managerString + "Manager{db: db}\n}\n\n// Create creates new " + managerString + " record.\nfunc (m " + managerString + "Manager) Create(" + strcase.ToLowerCamel(managerString) + " *models." + managerString + ") error {\n\tresult := m.db.Create(" + strcase.ToLowerCamel(managerString) + ")\n\treturn helpers.GORMErrConverter(result.Error)\n}\n\n// Update updates given " + managerString + " record.\nfunc (m " + managerString + "Manager) Update(" + strcase.ToLowerCamel(managerString) + " *models." + managerString + ") error {\n\tresult := m.db.Save(" + strcase.ToLowerCamel(managerString) + ")\n\treturn helpers.GORMErrConverter(result.Error)\n}\n\n// Delete deletes " + managerString + " record.\nfunc (m " + managerString + "Manager) Delete(id uint) error {\n\tresult := m.db.Delete(&models." + managerString + "{Base: models.Base{ID: id}})\n\treturn result.Error\n}\n\n// Get get " + managerString + " by given id.\nfunc (m " + managerString + "Manager) Get(" + strcase.ToLowerCamel(managerString) + " *models." + managerString + ") error {\n\tresult := m.db.First(" + strcase.ToLowerCamel(managerString) + ")\n\treturn helpers.GORMErrConverter(result.Error)\n}\n\n// List get " + managerString + "s list.\nfunc (m " + managerString + "Manager) List(" + strcase.ToLowerCamel(managerString) + "s *[]models." + managerString + ") error {\n\tresult := m.db.Find(" + strcase.ToLowerCamel(managerString) + "s)\n\treturn helpers.GORMErrConverter(result.Error)\n}")
+					len, err := ioutil.ReadFile("source/managerTemplate.txt")
 					if err != nil {
 						log.Fatal(err)
-					} else {
-						log.Println("Yazılan byte boyutu: " + strconv.Itoa(len))
 					}
+					if strings.Contains(string(len), "${UpperCaseName}") || strings.Contains(string(len), "${camelCaseName}") {
+						len = []byte(strings.Replace(string(len), "${UpperCaseName}", managerString, -1))
+						len = []byte(strings.Replace(string(len), "${camelCaseName}", strcase.ToLowerCamel(managerString), -1))
+					}
+					file.WriteString(string(len))
 				}
-
 				return nil
 			},
 		},
@@ -137,19 +153,17 @@ func main() {
 					if err != nil {
 						log.Fatal(err)
 					}
-
-					// Fonksiyon sonunda dosyayı kapat
 					defer file.Close()
-
-					// Dosyaya yaz
-					len, err := file.WriteString("package exchanges\n\nimport \"github.com/biges/hybrone-sentinel-backend/models\"\n\ntype " + exchangeString + "Service interface {\n\t" + exchangeString + "Create(" + exchangeString + "CreateRequest, " + exchangeString + "CreateResponse) error\n\t" + exchangeString + "Update(" + exchangeString + "UpdateRequest, " + exchangeString + "UpdateResponse) error\n\t" + exchangeString + "Delete(" + exchangeString + "DeleteRequest, " + exchangeString + "DeleteResponse) error\n\t" + exchangeString + "Get(" + exchangeString + "GetRequest, " + exchangeString + "GetResponse) error\n\t" + exchangeString + "List(" + exchangeString + "ListRequest, " + exchangeString + "ListResponse) error\n}\n\n// " + exchangeString + "CreateRequest holds data for creating new " + exchangeString + ".\ntype " + exchangeString + "CreateRequest struct {\n\t" + exchangeString + " *models." + exchangeString + " `json:\"" + strcase.ToSnake(exchangeString) + "\" validate:\"required\"`\n}\n\n// " + exchangeString + "CreateResponse holds newly created " + exchangeString + " instance data.\ntype " + exchangeString + "CreateResponse struct {\n\tBaseResponse\n\t" + exchangeString + " *models." + exchangeString + " `json:\"" + strcase.ToSnake(exchangeString) + "\"`\n}\n\n// " + exchangeString + "UpdateRequest holds data for updating a " + exchangeString + ".\ntype " + exchangeString + "UpdateRequest struct {\n\t" + exchangeString + " *models." + exchangeString + " `json:\"" + strcase.ToSnake(exchangeString) + "\" validate:\"required\"`\n}\n\n// " + exchangeString + "UpdateResponse holds newly updated " + exchangeString + " instance data.\ntype " + exchangeString + "UpdateResponse struct {\n\tBaseResponse\n\t" + exchangeString + " *models." + exchangeString + " `json:\"" + strcase.ToSnake(exchangeString) + "\"`\n}\n\n// " + exchangeString + "DeleteRequest holds data for deleting new " + exchangeString + ".\ntype " + exchangeString + "DeleteRequest struct {\n\tID uint `json:\"id\"`\n}\n\n// " + exchangeString + "DeleteResponse holds newly deleted " + exchangeString + " query error.\ntype " + exchangeString + "DeleteResponse struct {\n\tBaseResponse\n\tID uint `json:\"id\"`\n}\n\n// " + exchangeString + "GetRequest holds data for get " + exchangeString + ".\ntype " + exchangeString + "GetRequest struct {\n\t" + exchangeString + " *models." + exchangeString + " `json:\"" + strcase.ToSnake(exchangeString) + "\" validate:\"required\"`\n}\n\n// " + exchangeString + "GetResponse holds " + exchangeString + " instance data.\ntype " + exchangeString + "GetResponse struct {\n\tBaseResponse\n\t" + exchangeString + " *models." + exchangeString + " `json:\"" + strcase.ToSnake(exchangeString) + "\"`\n}\n\n// " + exchangeString + "ListRequest holds filters for " + exchangeString + " list.\ntype " + exchangeString + "ListRequest struct {\n\t// filters\n}\n\n// " + exchangeString + "ListResponse holds " + exchangeString + "s data.\ntype " + exchangeString + "ListResponse struct {\n\tBaseResponse\n\t" + exchangeString + "s *[]models." + exchangeString + " `json:\"" + strcase.ToSnake(exchangeString) + "s\"`\n}")
+					len, err := ioutil.ReadFile("source/exchangeTemplate.txt")
 					if err != nil {
 						log.Fatal(err)
-					} else {
-						log.Println("Yazılan byte boyutu: " + strconv.Itoa(len))
 					}
+					if strings.Contains(string(len), "${Name}") || strings.Contains(string(len), "${name_snake_case}") {
+						len = []byte(strings.Replace(string(len), "${Name}", exchangeString, -1))
+						len = []byte(strings.Replace(string(len), "${name_snake_case}", strcase.ToSnake(exchangeString), -1))
+					}
+					file.WriteString(string(len))
 				}
-
 				return nil
 			},
 		},
@@ -161,7 +175,7 @@ func main() {
 				filepath := c.String("path")
 				value := c.String("controller-name")
 				if value == "" {
-					fmt.Println("controller name cannot be empty")
+					fmt.Println("exchange name cannot be empty")
 				} else {
 
 					controllerString := strcase.ToCamel(value)
@@ -169,19 +183,17 @@ func main() {
 					if err != nil {
 						log.Fatal(err)
 					}
-
-					// Fonksiyon sonunda dosyayı kapat
 					defer file.Close()
-
-					// Dosyaya yaz
-					len, err := file.WriteString("package controller\n\nimport (\n\t\"github.com/biges/hybrone-sentinel-backend/exchanges\"\n\t\"github.com/biges/hybrone-sentinel-backend/models\"\n)\n\n// " + controllerString + "Create is a service method of " + controllerString + "Service interfaces.\nfunc (s Service) " + controllerString + "Create(req exchanges." + controllerString + "CreateRequest) (exchanges." + controllerString + "CreateResponse, error) {\nres := exchanges." + controllerString + "CreateResponse{}\nerr := s." + controllerString + "Manager.Create(req." + controllerString + ")\nif err != nil {\n\tres.Message = \"Oluşturulamadı.\"\n\treturn res,err\n}\nres." + controllerString + " = req." + controllerString + "\nreturn res,err\n}\n\n// " + controllerString + "Update is a service method of " + controllerString + "Service interfaces.\nfunc (s Service) " + controllerString + "Update(req exchanges." + controllerString + "UpdateRequest) (exchanges." + controllerString + "UpdateResponse, error) {\nres := exchanges." + controllerString + "UpdateResponse{}\nerr := s." + controllerString + "Manager.Update(req." + controllerString + ")\nif err != nil {\n\tres.Message = \"Oluşturulamadı.\"\n\treturn res,err\n}\nres." + controllerString + " = req." + controllerString + "\nreturn res,err\n}\n\n// " + controllerString + "Delete is a service method of " + controllerString + "Service interfaces.\nfunc (s Service) " + controllerString + "Delete(req exchanges." + controllerString + "DeleteRequest) (exchanges." + controllerString + "DeleteResponse, error) {\nres := exchanges." + controllerString + "DeleteResponse{}\nerr := s." + controllerString + "Manager.Delete(req.ID)\nif err != nil {\n\tres.Message = \"Silinemedi.\"\n\treturn res,err\n}\nres.ID = req.ID\nreturn res,err\n}\n\n// " + controllerString + "Get is a service method of " + controllerString + "Service interfaces.\nfunc (s Service) " + controllerString + "Get(req exchanges." + controllerString + "GetRequest) (exchanges." + controllerString + "GetResponse, error) {\nres := exchanges." + controllerString + "GetResponse{}\nerr := s." + controllerString + "Manager.Get(req." + controllerString + ")\nif err != nil {\n\tres.Message = \"Bulunamadı.\"\n\treturn res,err\nres." + controllerString + " = req." + controllerString + "\nreturn res,err\n}\n\n// " + controllerString + "List is a service method of " + controllerString + "Service interfaces.\nfunc (s Service) " + controllerString + "List(req exchanges." + controllerString + "ListRequest) (exchanges." + controllerString + "ListResponse, error) {\nres := exchanges." + controllerString + "ListResponse{}\n" + strcase.ToLowerCamel(controllerString) + "s := new([]models." + controllerString + ")\nerr := s." + controllerString + "Manager.List(" + strcase.ToLowerCamel(controllerString) + "s)\nif err != nil {\n\tres.Message = \"Bulunamadı.\"\n\treturn res,err\n}\nres." + controllerString + "s = " + strcase.ToLowerCamel(controllerString) + "s\nreturn res,err\n}")
+					len, err := ioutil.ReadFile("source/controllerTemplate.txt")
 					if err != nil {
 						log.Fatal(err)
-					} else {
-						log.Println("Yazılan byte boyutu: " + strconv.Itoa(len))
 					}
+					if strings.Contains(string(len), "${Name}") || strings.Contains(string(len), "${name}") {
+						len = []byte(strings.Replace(string(len), "${Name}", controllerString, -1))
+						len = []byte(strings.Replace(string(len), "${name}", strcase.ToLowerCamel(controllerString), -1))
+					}
+					file.WriteString(string(len))
 				}
-
 				return nil
 			},
 		},
@@ -215,6 +227,77 @@ func main() {
 				err = cmdController.Run()
 				if err != nil {
 					return err
+				}
+				cmdRest := exec.Command(bin, "run", "main.go", "rest", "--rest-name", createName)
+				err = cmdRest.Run()
+				if err != nil {
+					return err
+				}
+				cmdRestTest := exec.Command(bin, "run", "main.go", "restTest", "--rest-test-name", createName)
+				err = cmdRestTest.Run()
+				if err != nil {
+					return err
+				}
+				return nil
+			},
+		},
+		{
+			Name:  "rest",
+			Usage: "Create rest template in rest folder",
+			Flags: restFlags,
+			Action: func(c *cli.Context) error {
+				filepath := c.String("path")
+				value := c.String("rest-name")
+				if value == "" {
+					fmt.Println("rest name cannot be empty")
+				} else {
+
+					restString := strcase.ToCamel(value)
+					file, err := os.OpenFile(filepath+strings.ToLower(restString)+".go", os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
+					if err != nil {
+						log.Fatal(err)
+					}
+					defer file.Close()
+					len, err := ioutil.ReadFile("source/restTemplate.txt")
+					if err != nil {
+						log.Fatal(err)
+					}
+					if strings.Contains(string(len), "${Name}") || strings.Contains(string(len), "${name}") || strings.Contains(string(len), "${nameCamelCase}") {
+						len = []byte(strings.Replace(string(len), "${Name}", restString, -1))
+						len = []byte(strings.Replace(string(len), "${nameCamelCase}", strcase.ToLowerCamel(restString), -1))
+					}
+					file.WriteString(string(len))
+				}
+				return nil
+			},
+		},
+		{
+			Name:  "restTest",
+			Usage: "Create rest test template in rest folder",
+			Flags: restTestFlags,
+			Action: func(c *cli.Context) error {
+				filepath := c.String("path")
+				value := c.String("rest-test-name")
+				if value == "" {
+					fmt.Println("rest test name cannot be empty")
+				} else {
+
+					restTestString := strcase.ToCamel(value)
+					file, err := os.OpenFile(filepath+strings.ToLower(restTestString)+"_test"+".go", os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
+					if err != nil {
+						log.Fatal(err)
+					}
+					defer file.Close()
+					len, err := ioutil.ReadFile("source/restTestTemplate.txt")
+					if err != nil {
+						log.Fatal(err)
+					}
+					if strings.Contains(string(len), "${ModelName}") || strings.Contains(string(len), "${modelName}") || strings.Contains(string(len), "${model_name_snake_case}") {
+						len = []byte(strings.Replace(string(len), "${ModelName}", restTestString, -1))
+						len = []byte(strings.Replace(string(len), "${modelName}", strcase.ToLowerCamel(restTestString), -1))
+						len = []byte(strings.Replace(string(len), "${model_name_snake_case}", strcase.ToSnake(restTestString), -1))
+					}
+					file.WriteString(string(len))
 				}
 				return nil
 			},
