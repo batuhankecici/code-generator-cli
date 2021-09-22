@@ -1,0 +1,56 @@
+package managers
+
+import (
+	"github.com/biges/hybrone-sentinel-backend/models"
+    "github.com/biges/hybrone-sentinel-backend/helpers"
+	"gorm.io/gorm"
+)
+
+// ${UpperCaseName}Storage defines the behaviors required to perform CRUD operations on a Device model.
+type ${UpperCaseName}Storage interface {
+	Create(${camelCaseName} *models.${UpperCaseName}) error
+	Update(${camelCaseName} *models.${UpperCaseName}) error
+	Delete(id uint) error
+	Get(${camelCaseName} *models.${UpperCaseName}) error
+	List(${camelCaseName} *[]models.${UpperCaseName}) error
+}
+
+// ${UpperCaseName}Manager represents Device related CRUD operations.
+type ${UpperCaseName}Manager struct {
+	db *gorm.DB
+}
+
+// New${UpperCaseName}Manager returns DeviceManager instance.
+func New${UpperCaseName}Manager(db *gorm.DB) ${UpperCaseName}Storage {
+	return &${UpperCaseName}Manager{db: db}
+}
+
+// Create creates new ${UpperCaseName} record.
+func (m ${UpperCaseName}Manager) Create(${camelCaseName} *models.${UpperCaseName}) error {
+	result := m.db.Create(${camelCaseName})
+	return helpers.GORMErrConverter(result.Error)
+}
+
+// Update updates given ${UpperCaseName} record.
+func (m ${UpperCaseName}Manager) Update(${camelCaseName} *models.${UpperCaseName}) error {
+	result := m.db.Save(${camelCaseName})
+	return helpers.GORMErrConverter(result.Error)
+}
+
+// Delete deletes ${UpperCaseName} record.
+func (m ${UpperCaseName}Manager) Delete(id uint) error {
+	result := m.db.Delete(&models.${UpperCaseName}{Base: models.Base{ID: id}})
+	return result.Error
+}
+
+// Get get ${UpperCaseName} by given id.
+func (m ${UpperCaseName}Manager) Get(${camelCaseName} *models.${UpperCaseName}) error {
+	result := m.db.First(${camelCaseName})
+	return helpers.GORMErrConverter(result.Error)
+}
+
+// List get ${UpperCaseName}s list.
+func (m ${UpperCaseName}Manager) List(${camelCaseName}s *[]models.${UpperCaseName}) error {
+	result := m.db.Find(${camelCaseName}s)
+	return helpers.GORMErrConverter(result.Error)
+}

@@ -1,0 +1,11 @@
+package models
+
+// $ModelNameUpperCase is struct for db.
+type $ModelNameUpperCase struct {
+   Base
+}
+
+// TableName custom table name function
+func (m $ModelNameUpperCase) TableName() string {
+   return "hs_$model_name_snake_case"
+}

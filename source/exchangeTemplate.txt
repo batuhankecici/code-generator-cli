@@ -1,0 +1,66 @@
+package exchanges
+
+import "github.com/biges/hybrone-sentinel-backend/models"
+
+type ${Name}Service interface {
+	${Name}Create(${Name}CreateRequest, ${Name}CreateResponse) error
+	${Name}Update(${Name}UpdateRequest, ${Name}UpdateResponse) error
+	${Name}Delete(${Name}DeleteRequest, ${Name}DeleteResponse) error
+	${Name}Get(${Name}GetRequest, ${Name}GetResponse) error
+	${Name}List(${Name}ListRequest, ${Name}ListResponse) error
+}
+
+// ${Name}CreateRequest holds data for creating new ${Name}.
+type ${Name}CreateRequest struct {
+	${Name} *models.${Name} `json:"${name_snake_case}" validate:"required"`
+}
+
+// ${Name}CreateResponse holds newly created ${Name} instance data.
+type ${Name}CreateResponse struct {
+    BaseResponse
+	${Name} *models.${Name} `json:"${name_snake_case}"`
+}
+
+// ${Name}UpdateRequest holds data for updating a ${Name}.
+type ${Name}UpdateRequest struct {
+	${Name} *models.${Name} `json:"${name_snake_case}" validate:"required"`
+}
+
+// ${Name}UpdateResponse holds newly updated ${Name} instance data.
+type ${Name}UpdateResponse struct {
+    BaseResponse
+	${Name} *models.${Name} `json:"${name_snake_case}"`
+}
+
+// ${Name}DeleteRequest holds data for deleting new ${Name}.
+type ${Name}DeleteRequest struct {
+	ID uint `json:"id"`
+}
+
+// ${Name}DeleteResponse holds newly deleted ${Name} query error.
+type ${Name}DeleteResponse struct {
+    BaseResponse
+	ID uint `json:"id"`
+}
+
+// ${Name}GetRequest holds data for get ${Name}.
+type ${Name}GetRequest struct {
+	${Name} *models.${Name} `json:"${name_snake_case}" validate:"required"`
+}
+
+// ${Name}GetResponse holds ${Name} instance data.
+type ${Name}GetResponse struct {
+    BaseResponse
+	${Name} *models.${Name} `json:"${name_snake_case}"`
+}
+
+// ${Name}ListRequest holds filters for ${Name} list.
+type ${Name}ListRequest struct {
+	// filters
+}
+
+// ${Name}ListResponse holds ${Name}s data.
+type ${Name}ListResponse struct {
+    BaseResponse
+	${Name}s *[]models.${Name} `json:"${name_snake_case}s"`
+}

@@ -1,0 +1,67 @@
+package controller
+
+import (
+	"github.com/biges/hybrone-sentinel-backend/exchanges"
+	"github.com/biges/hybrone-sentinel-backend/models"
+)
+
+// ${Name}Create is a service method of ${Name}Service interfaces.
+func (s Service) ${Name}Create(req exchanges.${Name}CreateRequest) (exchanges.${Name}CreateResponse, error) {
+res := exchanges.${Name}CreateResponse{}
+err := s.${Name}Manager.Create(req.${Name})
+if err != nil {
+	res.Message = "Oluşturulamadı."
+	return res,err
+}
+res.${Name} = req.${Name}
+return res,err
+}
+
+// ${Name}Update is a service method of ${Name}Service interfaces.
+func (s Service) ${Name}Update(req exchanges.${Name}UpdateRequest) (exchanges.${Name}UpdateResponse, error) {
+res := exchanges.${Name}UpdateResponse{}
+err := s.${Name}Manager.Update(req.${Name})
+if err != nil {
+	res.Message = "Güncellemedi."
+	return res,err
+}
+res.${Name} = req.${Name}
+return res,err
+}
+
+// ${Name}Update is a service method of ${Name}Service interfaces.
+func (s Service) ${Name}Delete(req exchanges.${Name}DeleteRequest) (exchanges.${Name}DeleteResponse, error) {
+res := exchanges.${Name}DeleteResponse{}
+err := s.${Name}Manager.Delete(req.ID)
+if err != nil {
+	res.Message = "Silinemedi."
+	return res,err
+}
+res.ID = req.ID
+return res,err
+}
+
+// ${Name}Get is a service method of ${Name}Service interfaces.
+func (s Service) ${Name}Get(req exchanges.${Name}GetRequest) (exchanges.${Name}GetResponse, error) {
+res := exchanges.${Name}GetResponse{}
+err := s.${Name}Manager.Get(req.${Name})
+if err != nil {
+	res.Message = "Bulunamadı."
+	return res,err
+}
+res.${Name} = req.${Name}
+return res,err
+}
+
+// ${Name}List is a service method of ${Name}Service interfaces.
+func (s Service) ${Name}List(req exchanges.${Name}ListRequest) (exchanges.${Name}ListResponse, error) {
+res := exchanges.${Name}ListResponse{}
+${name}s := new([]models.${Name})
+err := s.${Name}Manager.List(${name}s)
+if err != nil {
+	res.Message = "Bulunamadı."
+	return res,err
+}
+res.${Name}s = ${name}s
+return res,err
+}

@@ -1,0 +1,216 @@
+package rest
+
+import (
+	"fmt"
+	"io/ioutil"
+	"net/http"
+	"os"
+	"strings"
+	"testing"
+	"time"
+
+	"github.com/stretchr/testify/assert"
+)
+
+func Test${ModelName}Create(t *testing.T) {
+    InitialDatasForTest(InitTestDatabase())
+	${modelName} := InitialTestData.${ModelName}
+	${modelName}.ID = 0
+	reqBody, err := json.Marshal(map[string]interface{}{"${model_name_snake_case}": ${modelName}})
+	assert.Nil(t, err)
+	// Create new client
+	client := http.Client{Timeout: time.Minute}
+	// Create new request
+	req, err := http.NewRequest(
+		"POST",
+		fmt.Sprintf("http://%s%s/api/v1/${routeSuffix}", "localhost", os.Getenv("LISTEN_ADDR")),
+		strings.NewReader(string(reqBody)),
+	)
+	// Check prepare request have an error
+	assert.Nil(t, err)
+	// Add Bearer Token
+	token, err := AuthenticationForTest()
+	assert.Nil(t, err)
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", token))
+	// Add Content-Type header
+	req.Header.Add("Content-Type", "application/json")
+	// Do request
+	res, err := client.Do(req)
+	// Check request have an error
+	assert.Nil(t, err)
+	// Read response body
+	body, err := ioutil.ReadAll(res.Body)
+	if res.StatusCode != 201 {
+		fmt.Println(string(body))
+	}
+	// Check reading have an error
+	assert.Nil(t, err)
+	// Check is response status code 201
+	assert.Equal(t, 201, res.StatusCode)
+}
+
+func Test${ModelName}Update(t *testing.T) {
+    InitialDatasForTest(InitTestDatabase())
+	${modelName} := InitialTestData.${ModelName}
+	reqBody, err := json.Marshal(map[string]interface{}{"${model_name_snake_case}": ${modelName}})
+	assert.Nil(t, err)
+	// Create new client
+	client := http.Client{Timeout: time.Minute}
+	// Create new request
+	req, err := http.NewRequest(
+		"PATCH",
+		fmt.Sprintf("http://%s%s/api/v1/${routeSuffix}/%d", "localhost", os.Getenv("LISTEN_ADDR"), ${modelName}.ID),
+		strings.NewReader(string(reqBody)),
+	)
+	// Check prepare request have an error
+	assert.Nil(t, err)
+	// Add Bearer Token
+	token, err := AuthenticationForTest()
+	assert.Nil(t, err)
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", token))
+	// Add Content-Type header
+	req.Header.Add("Content-Type", "application/json")
+	// Do request
+	res, err := client.Do(req)
+	// Check request have an error
+	assert.Nil(t, err)
+	// Read response body
+	body, err := ioutil.ReadAll(res.Body)
+	if res.StatusCode != 200 {
+		fmt.Println(string(body))
+	}
+	// Check reading have an error
+	assert.Nil(t, err)
+	// Check is response status code 200
+	assert.Equal(t, 200, res.StatusCode)
+}
+
+func Test${ModelName}Get(t *testing.T) {
+    InitialDatasForTest(InitTestDatabase())
+	${modelName} := InitialTestData.${ModelName}
+	// Create new client
+	client := http.Client{Timeout: time.Minute}
+	// Create new request
+	req, err := http.NewRequest(
+		"GET",
+		fmt.Sprintf("http://%s%s/api/v1/${routeSuffix}/%d", "localhost", os.Getenv("LISTEN_ADDR"), ${modelName}.ID),
+		nil,
+	)
+	// Check prepare request have an error
+	assert.Nil(t, err)
+	// Add Bearer Token
+	token, err := AuthenticationForTest()
+	assert.Nil(t, err)
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", token))
+	// Add Content-Type header
+	req.Header.Add("Content-Type", "application/json")
+	// Do request
+	res, err := client.Do(req)
+	// Check request have an error
+	assert.Nil(t, err)
+	// Read response body
+	body, err := ioutil.ReadAll(res.Body)
+	if res.StatusCode != 200 {
+		fmt.Println(string(body))
+	}
+	// Check reading have an error
+	assert.Nil(t, err)
+	// Check is response status code 200
+	assert.Equal(t, 200, res.StatusCode)
+}
+
+func Test${ModelName}List(t *testing.T) {
+    InitialDatasForTest(InitTestDatabase())
+	// Create new client
+	client := http.Client{Timeout: time.Minute}
+	// Create new request
+	req, err := http.NewRequest(
+		"GET",
+		fmt.Sprintf("http://%s%s/api/v1/${routeSuffix}", "localhost", os.Getenv("LISTEN_ADDR")),
+		nil,
+	)
+	// Check prepare request have an error
+	assert.Nil(t, err)
+	// Add Bearer Token
+	token, err := AuthenticationForTest()
+	assert.Nil(t, err)
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", token))
+	// Add Content-Type header
+	req.Header.Add("Content-Type", "application/json")
+	// Do request
+	res, err := client.Do(req)
+	// Check request have an error
+	assert.Nil(t, err)
+	// Read response body
+	body, err := ioutil.ReadAll(res.Body)
+	if res.StatusCode != 200 {
+		fmt.Println(string(body))
+	}
+	// Check reading have an error
+	assert.Nil(t, err)
+	// Check is response status code 200
+	assert.Equal(t, 200, res.StatusCode)
+}
+
+func Test${ModelName}Delete(t *testing.T) {
+    InitialDatasForTest(InitTestDatabase())
+	${modelName} := InitialTestData.${ModelName}
+	// Create new client
+	client := http.Client{Timeout: time.Minute}
+	// Create new request
+	req, err := http.NewRequest(
+		"DELETE",
+		fmt.Sprintf("http://%s%s/api/v1/${routeSuffix}/%d", "localhost", os.Getenv("LISTEN_ADDR"), ${modelName}.ID),
+		nil,
+	)
+	// Check prepare request have an error
+	assert.Nil(t, err)
+	// Add Bearer Token
+	token, err := AuthenticationForTest()
+	assert.Nil(t, err)
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", token))
+	// Add Content-Type header
+	req.Header.Add("Content-Type", "application/json")
+	// Do request
+	res, err := client.Do(req)
+	// Check request have an error
+	assert.Nil(t, err)
+	// Read response body
+	body, err := ioutil.ReadAll(res.Body)
+	if res.StatusCode != 200 {
+		fmt.Println(string(body))
+	}
+	// Check reading have an error
+	assert.Nil(t, err)
+	// Check is response status code 200
+	assert.Equal(t, 200, res.StatusCode)
+	// Delete process successful, create model again for other test functions
+	${modelName}.ID = 0
+	reqBody, err := json.Marshal(map[string]interface{}{"${model_name_snake_case}": ${modelName}})
+	assert.Nil(t, err)
+	// Create new request
+	req, err = http.NewRequest(
+		"POST",
+		fmt.Sprintf("http://%s%s/api/v1/${routeSuffix}", "localhost", os.Getenv("LISTEN_ADDR")),
+		strings.NewReader(string(reqBody)),
+	)
+	// Check prepare request have an error
+	assert.Nil(t, err)
+	// Add Bearer Token
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", token))
+	// Add Content-Type header
+	req.Header.Add("Content-Type", "application/json")
+	// Do request
+	res, err = client.Do(req)
+	// Check request have an error
+	assert.Nil(t, err)
+	// Read response body
+	body, err = ioutil.ReadAll(res.Body)
+	if res.StatusCode != 201 {
+		fmt.Println(string(body))
+	}
+	// Check reading have an error
+	assert.Nil(t, err)
+	// Check is response status code 201
+	assert.Equal(t, 201, res.StatusCode)
+}

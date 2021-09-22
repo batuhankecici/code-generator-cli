@@ -1,0 +1,120 @@
+package rest
+
+import (
+	"github.com/biges/hybrone-sentinel-backend/helpers"
+	"github.com/biges/hybrone-sentinel-backend/models"
+	"strconv"
+
+	"github.com/biges/hybrone-sentinel-backend/exchanges"
+
+	"github.com/gofiber/fiber/v2"
+)
+
+// ${Name}Create creates new ${Name}
+// @Tags ${nameCamelCase}s
+// @Param body body interfaces.${Name}CreateRequest true "${Name} create request"
+// @Success 200 {object} Response{data=interfaces.${Name}CreateResponse}
+// @Failure 400 {object} Response
+// @Router /${nameCamelCase}s [post]
+func ${Name}Create(c *fiber.Ctx) error {
+	req := exchanges.${Name}CreateRequest{}
+	if err := c.BodyParser(req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(ErrorResponse("HTTP Body can not parsed."))
+	}
+
+	if validationMessage, err := helpers.Validate(req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(ErrorResponse(validationMessage))
+	}
+
+	res,err := controller.Services.${Name}Create(req) 
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(ErrorResponse(res.Message,err))
+	}
+	return c.Status(fiber.StatusOK).JSON(SuccessResponse("Başarılı.",res))
+}
+
+// ${Name}Update updates ${Name} with given request.
+// @Tags ${nameCamelCase}s
+// @Param ${nameCamelCase}ID path int true "${Name} ID"
+// @Param body body interfaces.${Name}CreateRequest true "${Name} update request"
+// @Success 200 {object} Response{data=interfaces.${Name}UpdateResponse}
+// @Failure 400 {object} Response
+// @Router /${nameCamelCase}s/{${nameCamelCase}ID} [patch]
+func ${Name}Update(c *fiber.Ctx) error {
+    ${nameCamelCase}ID, err := strconv.Atoi(c.Params("${nameCamelCase}ID"))
+	if err != nil || ${nameCamelCase}ID == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(ErrorResponse("URL parametresi eksik veya hatalı."))
+	}
+	
+	req := exchanges.${Name}UpdateRequest{}
+	if err := c.BodyParser(req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(ErrorResponse("HTTP Body can not parsed."))
+	}
+	req.${Name}.ID = uint(${nameCamelCase}ID)
+
+	if validationMessage, err := helpers.Validate(req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(ErrorResponse(validationMessage))
+	}
+
+	res, err := controller.Services.${Name}Update(req)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(ErrorResponse(res.Message,err))
+	}
+	return c.Status(fiber.StatusOK).JSON(SuccessResponse("Başarılı.",res))
+}
+
+// ${Name}Delete deletes ${Name} with given id.
+// @Tags ${nameCamelCase}s
+// @Param ${nameCamelCase}ID path int true "${Name} ID"
+// @Success 200 {object} Response
+// @Failure 400 {object} Response
+// @Router /${nameCamelCase}s/{${nameCamelCase}ID} [delete]
+func ${Name}Delete(c *fiber.Ctx) error {
+	${nameCamelCase}ID, err := strconv.Atoi(c.Params("${nameCamelCase}ID"))
+	if err != nil || ${nameCamelCase}ID == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(ErrorResponse("URL parametresi eksik veya hatalı."))
+	}
+	req := exchanges.${Name}DeleteRequest{}
+	req.ID = uint(${nameCamelCase}ID)
+
+	res, err := controller.Services.${Name}Delete(req)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(ErrorResponse(res.Message,err))
+	}
+	return c.Status(fiber.StatusOK).JSON(SuccessResponse("Başarılı."))
+}
+
+// ${Name}Get get ${Name} with given id.
+// @Tags ${nameCamelCase}s
+// @Param ${nameCamelCase}ID path int true "${Name} ID"
+// @Success 200 {object} Response{data=interfaces.${Name}GetResponse}
+// @Failure 400 {object} Response
+// @Router /${nameCamelCase}s/{${nameCamelCase}ID} [get]
+func ${Name}Get(c *fiber.Ctx) error {
+	${nameCamelCase}ID, err := strconv.Atoi(c.Params("${nameCamelCase}ID"))
+	if err != nil || ${nameCamelCase}ID == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(ErrorResponse("URL parametresi eksik veya hatalı."))
+	}
+	req := exchanges.${Name}GetRequest{}
+	req.${Name} = &models.${Name}{Base: models.Base{ID: uint(${nameCamelCase}ID)}}
+
+	res, err := controller.Services.${Name}Get(req)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(ErrorResponse(res.Message,err))
+	}
+	return c.Status(fiber.StatusOK).JSON(SuccessResponse("",res))
+}
+
+// ${Name}List get ${Name}s with given request filters.
+// @Tags ${nameCamelCase}s
+// @Success 200 {object} Response{data=interfaces.${Name}ListResponse}
+// @Failure 400 {object} Response
+// @Router /${nameCamelCase}s [get]
+func ${Name}List(c *fiber.Ctx) error {
+	req := exchanges.${Name}ListRequest{}
+	res, err := controller.Services.${Name}List(req)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(ErrorResponse(res.Message,err))
+	}
+	return c.Status(fiber.StatusOK).JSON(SuccessResponse("", res))
+}
