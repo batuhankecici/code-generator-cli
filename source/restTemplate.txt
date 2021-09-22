@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	"github.com/biges/hybrone-sentinel-backend/exchanges"
-
+	"github.com/biges/hybrone-sentinel-backend/controller"
 	"github.com/gofiber/fiber/v2"
 )
 
