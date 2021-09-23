@@ -90,7 +90,7 @@ func main() {
 
 					modelString := strcase.ToCamel(value)
 					if _, err := os.Stat(filepath + strings.ToLower(modelString) + ".go"); err == nil {
-						fmt.Printf("%s already exists in models", modelString)
+						fmt.Printf("%s already exists in models\n", modelString)
 					} else {
 						file, err := os.OpenFile(filepath+strings.ToLower(modelString)+".go", os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
 						if err != nil {
@@ -106,6 +106,7 @@ func main() {
 							len = []byte(strings.Replace(string(len), "$model_name_snake_case", strcase.ToSnake(modelString), -1))
 						}
 						file.WriteString(string(len))
+						fmt.Printf("%s model created succesfully\n", modelString)
 					}
 				}
 
@@ -125,7 +126,7 @@ func main() {
 
 					managerString := strcase.ToCamel(value)
 					if _, err := os.Stat(filepath + strings.ToLower(managerString) + ".go"); err == nil {
-						fmt.Printf("%s already exists in managers", managerString)
+						fmt.Printf("%s already exists in managers\n", managerString)
 					} else {
 						file, err := os.OpenFile(filepath+strings.ToLower(managerString)+".go", os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
 						if err != nil {
@@ -141,6 +142,7 @@ func main() {
 							len = []byte(strings.Replace(string(len), "${camelCaseName}", strcase.ToLowerCamel(managerString), -1))
 						}
 						file.WriteString(string(len))
+						fmt.Printf("%s manager created succesfully\n", managerString)
 					}
 				}
 				return nil
@@ -159,7 +161,7 @@ func main() {
 
 					exchangeString := strcase.ToCamel(value)
 					if _, err := os.Stat(filepath + strings.ToLower(exchangeString) + ".go"); err == nil {
-						fmt.Printf("%s already exists in exchange", exchangeString)
+						fmt.Printf("%s already exists in exchange\n", exchangeString)
 					} else {
 						file, err := os.OpenFile(filepath+strings.ToLower(exchangeString)+".go", os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
 						if err != nil {
@@ -175,6 +177,7 @@ func main() {
 							len = []byte(strings.Replace(string(len), "${name_snake_case}", strcase.ToSnake(exchangeString), -1))
 						}
 						file.WriteString(string(len))
+						fmt.Printf("%s exchange created succesfully\n", exchangeString)
 					}
 				}
 				return nil
@@ -193,7 +196,7 @@ func main() {
 
 					controllerString := strcase.ToCamel(value)
 					if _, err := os.Stat(filepath + strings.ToLower(controllerString) + ".go"); err == nil {
-						fmt.Printf("%s already exists in controller", controllerString)
+						fmt.Printf("%s already exists in controller\n", controllerString)
 					} else {
 						file, err := os.OpenFile(filepath+strings.ToLower(controllerString)+".go", os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
 						if err != nil {
@@ -209,6 +212,7 @@ func main() {
 							len = []byte(strings.Replace(string(len), "${name}", strcase.ToLowerCamel(controllerString), -1))
 						}
 						file.WriteString(string(len))
+						fmt.Printf("%s controller created succesfully\n", controllerString)
 					}
 				}
 				return nil
@@ -271,7 +275,7 @@ func main() {
 
 					restString := strcase.ToCamel(value)
 					if _, err := os.Stat(filepath + strings.ToLower(restString) + ".go"); err == nil {
-						fmt.Printf("%s already exists in rest", restString)
+						fmt.Printf("%s already exists in rest\n", restString)
 					} else {
 						file, err := os.OpenFile(filepath+strings.ToLower(restString)+".go", os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
 						if err != nil {
@@ -287,6 +291,7 @@ func main() {
 							len = []byte(strings.Replace(string(len), "${nameCamelCase}", strcase.ToLowerCamel(restString), -1))
 						}
 						file.WriteString(string(len))
+						fmt.Printf("%s rest created succesfully\n", restString)
 					}
 				}
 				return nil
@@ -305,7 +310,7 @@ func main() {
 
 					restTestString := strcase.ToCamel(value)
 					if _, err := os.Stat(filepath + strings.ToLower(restTestString) + "_test" + ".go"); err == nil {
-						fmt.Printf("%s already exists in rest", restTestString)
+						fmt.Printf("%s already exists in rest\n", restTestString)
 					} else {
 						file, err := os.OpenFile(filepath+strings.ToLower(restTestString)+"_test"+".go", os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
 						if err != nil {
@@ -330,6 +335,7 @@ func main() {
 
 						}
 						file.WriteString(string(lens))
+						fmt.Printf("%s rest test created succesfully\n", restTestString)
 					}
 				}
 				return nil

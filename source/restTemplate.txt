@@ -18,7 +18,7 @@ import (
 // @Router /${nameCamelCase}s [post]
 func ${Name}Create(c *fiber.Ctx) error {
 	req := exchanges.${Name}CreateRequest{}
-	if err := c.BodyParser(req); err != nil {
+	if err := c.BodyParser(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(ErrorResponse("HTTP Body can not parsed."))
 	}
 
