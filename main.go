@@ -89,21 +89,26 @@ func main() {
 				} else {
 
 					modelString := strcase.ToCamel(value)
-					file, err := os.OpenFile(filepath+strings.ToLower(modelString)+".go", os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
-					if err != nil {
-						log.Fatal(err)
+					if _, err := os.Stat(filepath + strings.ToLower(modelString) + ".go"); err == nil {
+						fmt.Printf("%s already exists in models", modelString)
+					} else {
+						file, err := os.OpenFile(filepath+strings.ToLower(modelString)+".go", os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
+						if err != nil {
+							log.Fatalf("models directory does not find %s", err.Error())
+						}
+						defer file.Close()
+						len, err := ioutil.ReadFile("source/modelTemplate.txt")
+						if err != nil {
+							log.Fatal(err)
+						}
+						if strings.Contains(string(len), "$ModelNameUpperCase") || strings.Contains(string(len), "$model_name_snake_case") {
+							len = []byte(strings.Replace(string(len), "$ModelNameUpperCase", modelString, -1))
+							len = []byte(strings.Replace(string(len), "$model_name_snake_case", strcase.ToSnake(modelString), -1))
+						}
+						file.WriteString(string(len))
 					}
-					defer file.Close()
-					len, err := ioutil.ReadFile("source/modelTemplate.txt")
-					if err != nil {
-						log.Fatal(err)
-					}
-					if strings.Contains(string(len), "$ModelNameUpperCase") || strings.Contains(string(len), "$model_name_snake_case") {
-						len = []byte(strings.Replace(string(len), "$ModelNameUpperCase", modelString, -1))
-						len = []byte(strings.Replace(string(len), "$model_name_snake_case", strcase.ToSnake(modelString), -1))
-					}
-					file.WriteString(string(len))
 				}
+
 				return nil
 			},
 		},
@@ -119,20 +124,24 @@ func main() {
 				} else {
 
 					managerString := strcase.ToCamel(value)
-					file, err := os.OpenFile(filepath+strings.ToLower(managerString)+".go", os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
-					if err != nil {
-						log.Fatal(err)
+					if _, err := os.Stat(filepath + strings.ToLower(managerString) + ".go"); err == nil {
+						fmt.Printf("%s already exists in managers", managerString)
+					} else {
+						file, err := os.OpenFile(filepath+strings.ToLower(managerString)+".go", os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
+						if err != nil {
+							log.Fatalf("managers directory does not find %s", err.Error())
+						}
+						defer file.Close()
+						len, err := ioutil.ReadFile("source/managerTemplate.txt")
+						if err != nil {
+							log.Fatal(err)
+						}
+						if strings.Contains(string(len), "${UpperCaseName}") || strings.Contains(string(len), "${camelCaseName}") {
+							len = []byte(strings.Replace(string(len), "${UpperCaseName}", managerString, -1))
+							len = []byte(strings.Replace(string(len), "${camelCaseName}", strcase.ToLowerCamel(managerString), -1))
+						}
+						file.WriteString(string(len))
 					}
-					defer file.Close()
-					len, err := ioutil.ReadFile("source/managerTemplate.txt")
-					if err != nil {
-						log.Fatal(err)
-					}
-					if strings.Contains(string(len), "${UpperCaseName}") || strings.Contains(string(len), "${camelCaseName}") {
-						len = []byte(strings.Replace(string(len), "${UpperCaseName}", managerString, -1))
-						len = []byte(strings.Replace(string(len), "${camelCaseName}", strcase.ToLowerCamel(managerString), -1))
-					}
-					file.WriteString(string(len))
 				}
 				return nil
 			},
@@ -149,20 +158,24 @@ func main() {
 				} else {
 
 					exchangeString := strcase.ToCamel(value)
-					file, err := os.OpenFile(filepath+strings.ToLower(exchangeString)+".go", os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
-					if err != nil {
-						log.Fatal(err)
+					if _, err := os.Stat(filepath + strings.ToLower(exchangeString) + ".go"); err == nil {
+						fmt.Printf("%s already exists in exchange", exchangeString)
+					} else {
+						file, err := os.OpenFile(filepath+strings.ToLower(exchangeString)+".go", os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
+						if err != nil {
+							log.Fatalf("exchanges directory does not find %s", err.Error())
+						}
+						defer file.Close()
+						len, err := ioutil.ReadFile("source/exchangeTemplate.txt")
+						if err != nil {
+							log.Fatal(err)
+						}
+						if strings.Contains(string(len), "${Name}") || strings.Contains(string(len), "${name_snake_case}") {
+							len = []byte(strings.Replace(string(len), "${Name}", exchangeString, -1))
+							len = []byte(strings.Replace(string(len), "${name_snake_case}", strcase.ToSnake(exchangeString), -1))
+						}
+						file.WriteString(string(len))
 					}
-					defer file.Close()
-					len, err := ioutil.ReadFile("source/exchangeTemplate.txt")
-					if err != nil {
-						log.Fatal(err)
-					}
-					if strings.Contains(string(len), "${Name}") || strings.Contains(string(len), "${name_snake_case}") {
-						len = []byte(strings.Replace(string(len), "${Name}", exchangeString, -1))
-						len = []byte(strings.Replace(string(len), "${name_snake_case}", strcase.ToSnake(exchangeString), -1))
-					}
-					file.WriteString(string(len))
 				}
 				return nil
 			},
@@ -175,31 +188,35 @@ func main() {
 				filepath := c.String("path")
 				value := c.String("controller-name")
 				if value == "" {
-					fmt.Println("exchange name cannot be empty")
+					fmt.Println("controller name cannot be empty")
 				} else {
 
 					controllerString := strcase.ToCamel(value)
-					file, err := os.OpenFile(filepath+strings.ToLower(controllerString)+".go", os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
-					if err != nil {
-						log.Fatal(err)
+					if _, err := os.Stat(filepath + strings.ToLower(controllerString) + ".go"); err == nil {
+						fmt.Printf("%s already exists in controller", controllerString)
+					} else {
+						file, err := os.OpenFile(filepath+strings.ToLower(controllerString)+".go", os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
+						if err != nil {
+							log.Fatalf("controller directory does not find %s", err.Error())
+						}
+						defer file.Close()
+						len, err := ioutil.ReadFile("source/controllerTemplate.txt")
+						if err != nil {
+							log.Fatal(err)
+						}
+						if strings.Contains(string(len), "${Name}") || strings.Contains(string(len), "${name}") {
+							len = []byte(strings.Replace(string(len), "${Name}", controllerString, -1))
+							len = []byte(strings.Replace(string(len), "${name}", strcase.ToLowerCamel(controllerString), -1))
+						}
+						file.WriteString(string(len))
 					}
-					defer file.Close()
-					len, err := ioutil.ReadFile("source/controllerTemplate.txt")
-					if err != nil {
-						log.Fatal(err)
-					}
-					if strings.Contains(string(len), "${Name}") || strings.Contains(string(len), "${name}") {
-						len = []byte(strings.Replace(string(len), "${Name}", controllerString, -1))
-						len = []byte(strings.Replace(string(len), "${name}", strcase.ToLowerCamel(controllerString), -1))
-					}
-					file.WriteString(string(len))
 				}
 				return nil
 			},
 		},
 		{
 			Name:  "create",
-			Usage: "Create models,managers,exchanges,controller template",
+			Usage: "Create models,managers,exchanges,controller,rest and rest_test template",
 			Flags: createFlags,
 			Action: func(c *cli.Context) error {
 
@@ -209,35 +226,35 @@ func main() {
 					fmt.Println(err)
 				}
 				cmdModel := exec.Command(bin, "run", "main.go", "model", "--model-name", createName)
-				err = cmdModel.Run()
-				if err != nil {
-					return err
-				}
+				cmdModel.Stdout = os.Stdout
+				cmdModel.Stderr = os.Stderr
+				cmdModel.Run()
+
 				cmdManager := exec.Command(bin, "run", "main.go", "manager", "--manager-name", createName)
-				err = cmdManager.Run()
-				if err != nil {
-					return err
-				}
+				cmdManager.Stdout = os.Stdout
+				cmdManager.Stderr = os.Stderr
+				cmdManager.Run()
+
 				cmdExchange := exec.Command(bin, "run", "main.go", "exchange", "--exchange-name", createName)
-				err = cmdExchange.Run()
-				if err != nil {
-					return err
-				}
+				cmdExchange.Stdout = os.Stdout
+				cmdExchange.Stderr = os.Stderr
+				cmdExchange.Run()
+
 				cmdController := exec.Command(bin, "run", "main.go", "controller", "--controller-name", createName)
-				err = cmdController.Run()
-				if err != nil {
-					return err
-				}
+				cmdController.Stdout = os.Stdout
+				cmdController.Stderr = os.Stderr
+				cmdController.Run()
+
 				cmdRest := exec.Command(bin, "run", "main.go", "rest", "--rest-name", createName)
-				err = cmdRest.Run()
-				if err != nil {
-					return err
-				}
+				cmdRest.Stdout = os.Stdout
+				cmdRest.Stderr = os.Stderr
+				cmdRest.Run()
+
 				cmdRestTest := exec.Command(bin, "run", "main.go", "restTest", "--rest-test-name", createName)
-				err = cmdRestTest.Run()
-				if err != nil {
-					return err
-				}
+				cmdRestTest.Stdout = os.Stdout
+				cmdRestTest.Stderr = os.Stderr
+				cmdRestTest.Run()
+
 				return nil
 			},
 		},
@@ -253,20 +270,24 @@ func main() {
 				} else {
 
 					restString := strcase.ToCamel(value)
-					file, err := os.OpenFile(filepath+strings.ToLower(restString)+".go", os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
-					if err != nil {
-						log.Fatal(err)
+					if _, err := os.Stat(filepath + strings.ToLower(restString) + ".go"); err == nil {
+						fmt.Printf("%s already exists in rest", restString)
+					} else {
+						file, err := os.OpenFile(filepath+strings.ToLower(restString)+".go", os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
+						if err != nil {
+							log.Fatalf("rest directory does not find %s", err.Error())
+						}
+						defer file.Close()
+						len, err := ioutil.ReadFile("source/restTemplate.txt")
+						if err != nil {
+							log.Fatal(err)
+						}
+						if strings.Contains(string(len), "${Name}") || strings.Contains(string(len), "${name}") || strings.Contains(string(len), "${nameCamelCase}") {
+							len = []byte(strings.Replace(string(len), "${Name}", restString, -1))
+							len = []byte(strings.Replace(string(len), "${nameCamelCase}", strcase.ToLowerCamel(restString), -1))
+						}
+						file.WriteString(string(len))
 					}
-					defer file.Close()
-					len, err := ioutil.ReadFile("source/restTemplate.txt")
-					if err != nil {
-						log.Fatal(err)
-					}
-					if strings.Contains(string(len), "${Name}") || strings.Contains(string(len), "${name}") || strings.Contains(string(len), "${nameCamelCase}") {
-						len = []byte(strings.Replace(string(len), "${Name}", restString, -1))
-						len = []byte(strings.Replace(string(len), "${nameCamelCase}", strcase.ToLowerCamel(restString), -1))
-					}
-					file.WriteString(string(len))
 				}
 				return nil
 			},
@@ -283,29 +304,33 @@ func main() {
 				} else {
 
 					restTestString := strcase.ToCamel(value)
-					file, err := os.OpenFile(filepath+strings.ToLower(restTestString)+"_test"+".go", os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
-					if err != nil {
-						log.Fatal(err)
-					}
-					defer file.Close()
-					lens, err := ioutil.ReadFile("source/restTestTemplate.txt")
-					if err != nil {
-						log.Fatal(err)
-					}
-					if strings.Contains(string(lens), "${ModelName}") || strings.Contains(string(lens), "${modelName}") || strings.Contains(string(lens), "${model_name_snake_case}") || strings.Contains(string(lens), "${routeSuffix}") {
-						lens = []byte(strings.Replace(string(lens), "${ModelName}", restTestString, -1))
-						lens = []byte(strings.Replace(string(lens), "${modelName}", strcase.ToLowerCamel(restTestString), -1))
-						lens = []byte(strings.Replace(string(lens), "${model_name_snake_case}", strcase.ToSnake(restTestString), -1))
-						substring := restTestString[len(restTestString)-1:]
-						generated := restTestString[0 : len(restTestString)-1]
-						if substring == "y" {
-							lens = []byte(strings.Replace(string(lens), "${routeSuffix}", strcase.ToKebab(generated)+"ies", -1))
-						} else {
-							lens = []byte(strings.Replace(string(lens), "${routeSuffix}", strcase.ToKebab(restTestString)+"s", -1))
+					if _, err := os.Stat(filepath + strings.ToLower(restTestString) + "_test" + ".go"); err == nil {
+						fmt.Printf("%s already exists in rest", restTestString)
+					} else {
+						file, err := os.OpenFile(filepath+strings.ToLower(restTestString)+"_test"+".go", os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
+						if err != nil {
+							log.Fatalf("rest directory does not find %s", err.Error())
 						}
+						defer file.Close()
+						lens, err := ioutil.ReadFile("source/restTestTemplate.txt")
+						if err != nil {
+							log.Fatal(err)
+						}
+						if strings.Contains(string(lens), "${ModelName}") || strings.Contains(string(lens), "${modelName}") || strings.Contains(string(lens), "${model_name_snake_case}") || strings.Contains(string(lens), "${routeSuffix}") {
+							lens = []byte(strings.Replace(string(lens), "${ModelName}", restTestString, -1))
+							lens = []byte(strings.Replace(string(lens), "${modelName}", strcase.ToLowerCamel(restTestString), -1))
+							lens = []byte(strings.Replace(string(lens), "${model_name_snake_case}", strcase.ToSnake(restTestString), -1))
+							substring := restTestString[len(restTestString)-1:]
+							generated := restTestString[0 : len(restTestString)-1]
+							if substring == "y" {
+								lens = []byte(strings.Replace(string(lens), "${routeSuffix}", strcase.ToKebab(generated)+"ies", -1))
+							} else {
+								lens = []byte(strings.Replace(string(lens), "${routeSuffix}", strcase.ToKebab(restTestString)+"s", -1))
+							}
 
+						}
+						file.WriteString(string(lens))
 					}
-					file.WriteString(string(lens))
 				}
 				return nil
 			},
