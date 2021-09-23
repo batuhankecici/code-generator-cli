@@ -2,6 +2,7 @@
 # Nedir:
 Yeni eklenecek bir cihazın CRUD işlemleri için birden fazla klasör içerisinde bir sürü kod yazmamız gerekiyor.CRUD yapısı değişmeyeceği için yeni eklenen cihazların CRUD yapısını oluşturan bir cli yaptık. Tek satır create ile cihazın tüm CRUD işlemlerini oluşturabilirsiniz.
 
+# Kullanımı:
 Bütün yapıları tek seferde oluşturmak için:
 ```go
 cd code-generator-cli && go run main.go create --create-name "deneme"
